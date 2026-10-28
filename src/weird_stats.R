@@ -1,5 +1,7 @@
 pacman::p_load(tidyverse)
 
+df <- read_csv("dat/peripheries_data_anon.csv")
+
 ############# let's do it ###############
 
 stats <- df %>% 
@@ -32,7 +34,7 @@ stats_long %>%
   theme_bw()+
   theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())
 
-ggsave("stats.png", width = 6, height = 6)
+ggsave("figures/stats.png", width = 6, height = 6)
 
 
 ratings_stats <- df %>% 
