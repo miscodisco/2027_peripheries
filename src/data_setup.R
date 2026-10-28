@@ -104,3 +104,12 @@ df_anon <- df_anon %>%
 
 write_csv(df, "dat/peripheries_data.csv")
 write_csv(df_anon, "dat/peripheries_data_anon.csv")
+write_csv(tags_df, "dat/tags_data_anon.csv")
+
+
+######## because tags_df is too big for git, we will make a sample to upload ########
+sample_ids <- sample(tags_df$anon_work_id, 34486) # 10% of the data
+
+sample_tags_df <- tags_df %>% 
+  filter(anon_work_id %in% sample_ids)
+write_csv(sample_tags_df, "dat/sample_tags_data_anon.csv")
