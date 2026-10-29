@@ -119,4 +119,4 @@ gender_rating %>%
   theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())
 
 
-ggsave("figures/category_ratings.png", width = 6, height = 6)
+ggsave("figures/category_ratings.png", width = 10, height = 8)
