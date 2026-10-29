@@ -30,7 +30,7 @@ stats_long <- stats %>%
 stats_long %>% 
   ggplot(aes(label, value, fill = label), )+
   geom_bar(stat = "identity")+
-  geom_text(aes(label = round(value, 1), vjust= .5, size = 2))+
+  geom_text(aes(label = round(value, 1)), vjust= 1, size = 3)+
   facet_wrap(~stat, ncol = 2, scales = "free")+
   theme_bw()+
   theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())
@@ -50,9 +50,11 @@ ratings_stats <- df %>%
                          "Mature", "Explicit", "Not Rated"))) %>% 
   arrange(rating)
 
-ggplot(ratings_stats, aes(label, pct, fill = label))+
+ratings_stats %>% 
+  mutate(percent_label = paste0(round(pct,1), "%")) %>% 
+  ggplot(., aes(label, pct, fill = label))+
   geom_bar(stat = "identity")+
-  geom_text(aes(label = round(pct, 1)), vjust = 1)+
+  geom_text(aes(label = percent_label), vjust = 1)+
   facet_wrap(~rating, ncol = 2)+
   theme_bw()+
   theme(axis.ticks.x = element_blank(),axis.text.x = element_blank())
