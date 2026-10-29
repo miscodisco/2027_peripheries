@@ -15,7 +15,7 @@ small_cats <- cats_count %>%
   filter(n<=5)
 
 medium_cats <- cats_count %>% 
-  filter(n > 199, n < 349)
+  filter(n > 199, n < 351)
 
 
 dream <- rpf %>% 
