@@ -19,6 +19,8 @@ def main():
         "Small Fandoms",
     ]
 
+    all_groups_info = {}
+
     for group in groups:
         subset = tags.loc[tags["label"] == group]
 
@@ -65,7 +67,10 @@ def main():
             "hurt_comfort_count": hurtcomfort_count,
             "n_bang_tags": len(bang_tags),
             "n_slash_tags": len(slash_tags),
+            "n_unique_tags": len(tags_counter),
         }
+
+        all_groups_info[group] = group_dict
 
         with open(group_out_path.joinpath("all_tags_counter.json"), "w") as f:
             json.dump(tags_counter, f)
@@ -76,8 +81,8 @@ def main():
         with open(group_out_path.joinpath("slash_tags_counter.json"), "w") as f:
             json.dump(slash_tags_counter, f)
 
-        with open(group_out_path.joinpath("group_info.json"), "w") as f:
-            json.dump(group_dict, f)
+    with open(OUT_PATH.joinpath("groups_info.json"), "w") as f:
+        json.dump(all_groups_info, f)
 
 
 if __name__ == "__main__":

@@ -28,13 +28,14 @@ stats_long <- stats %>%
                                         "mean_hits", "median_hits")))
 
 stats_long %>% 
-  ggplot()+
-  geom_point(aes(label, value, col = label), size = 2)+
+  ggplot(aes(label, value, fill = label), )+
+  geom_bar(stat = "identity")+
+  geom_text(aes(label = round(value, 1), vjust= .5, size = 2))+
   facet_wrap(~stat, ncol = 2, scales = "free")+
   theme_bw()+
   theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())
 
-ggsave("figures/stats.png", width = 6, height = 6)
+ggsave("figures/stats.png", width = 7, height = 8)
 
 
 ratings_stats <- df %>% 
@@ -44,8 +45,19 @@ ratings_stats <- df %>%
             mean_kudos = mean(kudos),
             mean_khr = mean(khr),
             mean_ckr = mean(ckr)) %>% 
-  mutate(pct = n/sum(n)*100) %>% 
+  mutate(pct = n/sum(n)*100,
+         rating = factor(rating, levels = c("General Audiences", "Teen And Up Audiences", 
+                         "Mature", "Explicit", "Not Rated"))) %>% 
   arrange(rating)
+
+ggplot(ratings_stats, aes(label, pct, fill = label))+
+  geom_bar(stat = "identity")+
+  geom_text(aes(label = round(pct, 1)), vjust = 1)+
+  facet_wrap(~rating, ncol = 2)+
+  theme_bw()+
+  theme(axis.ticks.x = element_blank(),axis.text.x = element_blank())
+
+ggsave("figures/ratings.png", width = 6, height = 6)
 
 
 gender_cats <- df %>% 
@@ -79,7 +91,6 @@ gender_stats <- df %>%
 
 
 gender_rating <- df %>% 
-  filter(label != "Harry Potter",
-         category %in% cats) %>% 
+  filter(category %in% cats) %>% 
   count(label, category, rating) 
 
