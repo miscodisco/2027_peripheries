@@ -2,6 +2,11 @@ pacman::p_load(tidyverse)
 
 df <- read_csv("dat/peripheries_data_anon.csv")
 
+df <- df %>% 
+  mutate(rating = factor(rating, levels = c("General Audiences", "Teen And Up Audiences", 
+                                            "Mature", "Explicit", "Not Rated")),
+         label = factor(label, levels = c("Harry Potter", "Dream SMP", "The X-Files RPF", "Medium Fandoms", "Small Fandoms")))
+
 ############# let's do it ###############
 
 stats <- df %>% 
@@ -17,8 +22,7 @@ stats <- df %>%
             median_khr = median(khr),
             mean_ckr = mean(ckr),
             max_ckr = max(ckr),
-            median_ckr = median(ckr)) %>% 
-  mutate(label = factor(label, levels = c("Harry Potter", "Dream SMP", "The X-Files RPF", "Medium Fandoms", "Small Fandoms")))
+            median_ckr = median(ckr)) 
 
 
 stats_long <- stats %>% 
@@ -45,16 +49,16 @@ ratings_stats <- df %>%
             mean_kudos = mean(kudos),
             mean_khr = mean(khr),
             mean_ckr = mean(ckr)) %>% 
-  mutate(pct = n/sum(n)*100,
-         rating = factor(rating, levels = c("General Audiences", "Teen And Up Audiences", 
-                         "Mature", "Explicit", "Not Rated"))) %>% 
+  ungroup() %>% 
+  group_by(label) %>% 
+  mutate(pct = n/sum(n)*100) %>% 
   arrange(rating)
 
 ratings_stats %>% 
   mutate(percent_label = paste0(round(pct,1), "%")) %>% 
   ggplot(., aes(label, pct, fill = label))+
   geom_bar(stat = "identity")+
-  geom_text(aes(label = percent_label), vjust = 1)+
+  geom_text(aes(label = percent_label), vjust = 1, size = 3)+
   facet_wrap(~rating, ncol = 2)+
   theme_bw()+
   theme(axis.ticks.x = element_blank(),axis.text.x = element_blank())
@@ -79,7 +83,7 @@ gender_cats %>%
   filter(label == "Medium Fandoms")%>% 
   arrange(desc(n))
 
-cats <- c("M/M", "F/M", "F/F", "No Category", "Gen", "Multi", "Other")
+cats <- c("M/M", "F/M", "F/F", "Gen", "Multi",  "Other", "No category")
 
 gender_stats <- df %>% 
   filter(category %in% cats) %>% 
@@ -94,5 +98,25 @@ gender_stats <- df %>%
 
 gender_rating <- df %>% 
   filter(category %in% cats) %>% 
-  count(label, category, rating) 
+  group_by(label, category, rating) %>% 
+  summarise(n = n(), 
+            mean_hits = mean(hits),
+            mean_kudos = mean(kudos),
+            mean_khr = mean(khr),
+            mean_ckr = mean(ckr)) %>% 
+  ungroup() %>% 
+  group_by(label) %>% 
+  mutate(pct = n/sum(n)*100,
+         percent_label = paste0(round(pct,1), "%"),
+         category = factor(category, levels = cats)) 
 
+gender_rating %>% 
+  ggplot(aes(label, pct, fill = label))+
+  geom_bar(stat = "identity")+
+  geom_text(aes(label = percent_label), vjust = .5, size = 3)+
+  facet_grid(category~rating)+
+  theme_bw()+
+  theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())
+
+
+ggsave("figures/category_ratings.png", width = 6, height = 6)
