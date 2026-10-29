@@ -97,7 +97,7 @@ df_anon <- df %>%
   select(!c(work_id, author))
 
 tags_df <- df_anon %>% 
-  select(anon_work_id, anon_author, tags)
+  select(anon_work_id, anon_author, label, tags)
 
 df_anon <- df_anon %>% 
   select(!c(tags))

@@ -76,3 +76,10 @@ gender_stats <- df %>%
             mean_khr = mean(khr),
             mean_ckr = mean(ckr)) %>% 
   mutate(pct = (n/sum(n))*100)
+
+
+gender_rating <- df %>% 
+  filter(label != "Harry Potter",
+         category %in% cats) %>% 
+  count(label, category, rating) 
+
