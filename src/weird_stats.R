@@ -93,7 +93,17 @@ gender_stats <- df %>%
             mean_kudos = mean(kudos),
             mean_khr = mean(khr),
             mean_ckr = mean(ckr)) %>% 
-  mutate(pct = (n/sum(n))*100)
+  mutate(pct = (n/sum(n))*100,
+         percent_label = paste0(round(pct, 1), "%"))
+
+ggplot(gender_stats, aes(label, pct, fill = label))+
+  geom_bar(stat = "identity", alpha = .7)+
+  geom_text(aes(label = percent_label), vjust = 0.5, size = 3)+
+  facet_wrap(~category, ncol = 2)+
+  theme_bw()+
+  theme(axis.text.x = element_blank())
+
+ggsave("figures/categories.png", width = 6, height = 6)
 
 
 gender_rating <- df %>% 
