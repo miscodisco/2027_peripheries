@@ -37,11 +37,11 @@ def main():
     # get the subset with count >=5
     tags_subset = all_tags.loc[all_tags["count"] >= 5]
 
-    # rename the count col to match pattern
-    tags_subset = tags_subset.rename(columns={"count": "count_all"})
-
     # for getting the overall number of works for later normalization
     total_n_works = 0
+
+    # we will overwrite this later, this makes the merging more smooth
+    tags_subset["freq"] = 0
 
     # add group-specific frequencies
     for group in groups:
@@ -69,7 +69,7 @@ def main():
         )
 
     # calculate overall frequency of tags
-    tags_subset["freq_all"] = (tags_subset["count_all"] / total_n_works) * 100
+    tags_subset["freq"] = (tags_subset["count"] / total_n_works) * 100
 
     tags_subset.fillna(0, inplace=True)
     tags_subset.to_csv("dat/tags_w_freq.csv", index=False)
