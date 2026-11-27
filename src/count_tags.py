@@ -8,6 +8,7 @@ import json
 def main():
     DAT_PATH = Path("dat/")
     OUT_PATH = Path("output/")
+    print(type(DAT_PATH))
 
     tags = pd.read_csv(DAT_PATH.joinpath("tags_data_anon.csv"))
 
