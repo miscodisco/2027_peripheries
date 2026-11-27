@@ -59,6 +59,11 @@ def main():
             groups_tag_df, how="left", on="tag", suffixes=[None, f"_{col_name}"]
         )
 
+        # calculate freq diff
+        tags_subset[f"diff_freq_{col_name}"] = (
+            tags_subset[f"freq_{col_name}"] - tags_subset["freq"]
+        )
+
     tags_subset.fillna(0, inplace=True)
     tags_subset.to_csv("dat/tags_w_freq.csv", index=False)
 
