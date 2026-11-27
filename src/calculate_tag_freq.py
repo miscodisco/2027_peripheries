@@ -30,13 +30,17 @@ def main():
 
     # load data
     all_tags = read_tags_json_to_df(DAT_PATH.joinpath("all_tags.json"))
-
-    # calculate overall frequency of tags
-    total_tag_count = all_tags["count"].sum()
-    all_tags["freq"] = (all_tags["count"] / total_tag_count) * 100
+    with open("../output/groups_info.json", "r") as f:
+        groups_info = json.load(f)
 
     # get the subset with count >=5
     tags_subset = all_tags.loc[all_tags["count"] >= 5]
+
+    # rename the count col to match pattern
+    tags_subset = tags_subset.rename({"count": "count_all"})
+
+    # for getting the overall number of works for later normalization
+    total_n_works = 0
 
     # add group-specific frequencies
     for group in groups:
@@ -48,11 +52,15 @@ def main():
             group_dat_path.joinpath("all_tags_counter.json")
         )
 
-        # calculate the group frequency of tags
-        sum_tags = groups_tag_df["count"].sum()
-
         col_name = group.replace(" ", "_")
-        groups_tag_df[f"freq"] = (groups_tag_df["count"] / sum_tags) * 100
+
+        # add the number of documents in group, for normalizing
+        n_works = groups_info[group]["n_works"]
+        groups_tag_df[f"n-works_{col_name}"] = n_works
+        total_n_works += n_works
+
+        # calculate the group frequency of that tag
+        groups_tag_df["freq"] = (groups_tag_df["count"] / n_works) * 100
 
         # merge with all tags
         tags_subset = tags_subset.merge(
@@ -63,6 +71,9 @@ def main():
         tags_subset[f"diff_freq_{col_name}"] = (
             tags_subset[f"freq_{col_name}"] - tags_subset["freq"]
         )
+
+    # calculate overall frequency of tags
+    tags_subset["freq_all"] = (tags_subset["count_all"] / total_n_works) * 100
 
     tags_subset.fillna(0, inplace=True)
     tags_subset.to_csv("dat/tags_w_freq.csv", index=False)
