@@ -18,7 +18,7 @@ def main():
         "Medium Fandoms",
         "Small Fandoms",
     ]
-
+    all_groups_tag_list = []
     all_groups_info = {}
 
     for group in groups:
@@ -70,6 +70,7 @@ def main():
             "n_unique_tags": len(tags_counter),
         }
 
+        all_groups_tag_list.extend(full_tags_list)
         all_groups_info[group] = group_dict
 
         with open(group_out_path.joinpath("all_tags_counter.json"), "w") as f:
@@ -81,8 +82,13 @@ def main():
         with open(group_out_path.joinpath("slash_tags_counter.json"), "w") as f:
             json.dump(slash_tags_counter, f)
 
+    all_groups_tags_counter = Counter(all_groups_tag_list)
+
     with open(OUT_PATH.joinpath("groups_info.json"), "w") as f:
         json.dump(all_groups_info, f)
+
+    with open(OUT_PATH.joinpath("all_tags.json"), "w") as f:
+        json.dump(all_groups_tags_counter, f)
 
 
 if __name__ == "__main__":
