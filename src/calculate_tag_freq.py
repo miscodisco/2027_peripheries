@@ -69,6 +69,7 @@ def main():
         )
 
     # calculate overall frequency of tags
+    tags_subset["n-works_all"] = total_n_works
     tags_subset["freq"] = (tags_subset["count"] / total_n_works) * 100
 
     tags_subset.fillna(0, inplace=True)
