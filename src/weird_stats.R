@@ -130,3 +130,6 @@ gender_rating %>%
 
 
 ggsave("figures/category_ratings.png", width = 10, height = 8)
+
+xfiles <- df %>% 
+  filter(label == "The X-Files RPF")
